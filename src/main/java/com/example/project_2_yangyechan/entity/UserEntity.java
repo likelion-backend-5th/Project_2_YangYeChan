@@ -3,6 +3,7 @@ package com.example.project_2_yangyechan.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -26,11 +27,11 @@ public class UserEntity {
     private String phone;
 
     @OneToMany(mappedBy = "user")
-    private List<CommentEntity> comments;
+    private List<CommentEntity> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    private List<ArticleEntity> articles;
+    private List<ArticleEntity> articles = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    private List<Like_ArticleEntity> like_articles;
+    private List<Like_ArticleEntity> like_articles = new ArrayList<>();
 }

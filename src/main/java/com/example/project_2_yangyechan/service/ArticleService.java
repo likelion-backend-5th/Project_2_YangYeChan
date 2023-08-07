@@ -3,11 +3,14 @@ package com.example.project_2_yangyechan.service;
 import com.example.project_2_yangyechan.dto.ArticleDto;
 import com.example.project_2_yangyechan.dto.RequestArticlePageDto;
 import com.example.project_2_yangyechan.dto.RespondArticlePageDto;
+import com.example.project_2_yangyechan.dto.ResponseDto;
 import com.example.project_2_yangyechan.entity.ArticleEntity;
 import com.example.project_2_yangyechan.entity.Article_ImagesEntity;
+import com.example.project_2_yangyechan.entity.Like_ArticleEntity;
 import com.example.project_2_yangyechan.entity.UserEntity;
 import com.example.project_2_yangyechan.repository.ArticleRepository;
 import com.example.project_2_yangyechan.repository.Article_ImagesRepository;
+import com.example.project_2_yangyechan.repository.Like_ArticleRepository;
 import com.example.project_2_yangyechan.repository.UserRepository;
 import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +41,7 @@ public class ArticleService {
     private final Article_ImagesRepository articleImagesRepository;
     private final UserRepository userRepository;
     private final JpaUserDetailsManager manager;
+    private final Like_ArticleRepository likeArticleRepository;
 
     // CREATE
     public void createArticle(ArticleDto dto, Authentication authentication) {
@@ -192,6 +196,41 @@ public class ArticleService {
             ArticleEntity article = optionalArticle.get();
             article.setDeleted_at(currentTime);
             articleRepository.save(article);
+        }else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    // 좋아요 기능 /자신은 좋아요를 할 수 없음, 이미 좋아요 두번 누르면 좋아요는 취소
+    public ResponseDto likeArticleServie (Long article_id, Authentication authentication) {
+        // Article의 Deleted_at 필드가 null이 아니라면 반환하지 않음
+        Optional<ArticleEntity> optionalArticle = articleRepository.findById(article_id);
+        if (optionalArticle.get().getDeleted_at() != null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        // 사용자 정보 회수
+        String username = authentication.getName();
+        Optional<UserEntity> user = userRepository.findByUsername(username);
+
+        ResponseDto response = new ResponseDto();
+
+        // 사용자 검증
+        if (user.isPresent() && !optionalArticle.get().getUser().getUsername().equals(username)) {
+            Optional<Like_ArticleEntity> likeArticle = likeArticleRepository.findByUserAndArticle(user.get(), optionalArticle.get());
+            if (!likeArticle.isPresent()) {
+                // 좋아요 새로 생성
+                Like_ArticleEntity likeArticleEntity = new Like_ArticleEntity();
+                likeArticleEntity.setUser(user.get());
+                likeArticleEntity.setArticle(optionalArticle.get());
+                likeArticleRepository.save(likeArticleEntity);
+                response.setMessage("좋아요");
+                return response;
+            } else {
+                // 좋아요 취소
+                likeArticleRepository.deleteById(likeArticle.get().getId());
+                response.setMessage("좋아요 취소");
+                return response;
+            }
         }else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }

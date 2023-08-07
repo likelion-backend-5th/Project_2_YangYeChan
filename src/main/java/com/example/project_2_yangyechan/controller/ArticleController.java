@@ -103,4 +103,18 @@ public class ArticleController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
+
+    // POST /좋아요 구현
+    @PostMapping("/{id}/like")
+    public ResponseDto likeArticle(
+            @PathVariable("id") Long article_id,
+            @RequestBody RequestArticleDto request,
+            Authentication authentication
+    ) {
+        if (request.getArticle_request().equals("좋아요")) {
+            return articleService.likeArticleServie(article_id, authentication);
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
 }
