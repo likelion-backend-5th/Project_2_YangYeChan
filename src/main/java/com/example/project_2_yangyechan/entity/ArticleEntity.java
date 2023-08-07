@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -27,11 +28,11 @@ public class ArticleEntity {
     private LocalDateTime deleted_at;
 
     @OneToMany(mappedBy = "article")
-    private List<CommentEntity> comments;
+    private List<CommentEntity> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "article")
-    private List<Like_ArticleEntity> like_articles;
+    private List<Like_ArticleEntity> like_articles = new ArrayList<>();
 
     @OneToMany(mappedBy = "article")
-    private List<Article_ImagesEntity> article_images;
+    private List<Article_ImagesEntity> article_images = new ArrayList<>();
 }

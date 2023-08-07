@@ -1,24 +1,33 @@
 package com.example.project_2_yangyechan.service;
 
 import com.example.project_2_yangyechan.dto.ArticleDto;
+import com.example.project_2_yangyechan.dto.RequestArticlePageDto;
+import com.example.project_2_yangyechan.dto.RespondArticlePageDto;
 import com.example.project_2_yangyechan.entity.ArticleEntity;
 import com.example.project_2_yangyechan.entity.Article_ImagesEntity;
 import com.example.project_2_yangyechan.entity.UserEntity;
 import com.example.project_2_yangyechan.repository.ArticleRepository;
 import com.example.project_2_yangyechan.repository.Article_ImagesRepository;
 import com.example.project_2_yangyechan.repository.UserRepository;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -67,8 +76,8 @@ public class ArticleService {
         if (optionalArticle.isPresent()
                 && optionalArticle.get().getUser().getUsername().equals(username)
                 && optionalArticle.get().getId().equals(article_id)) {
-            // articleImage/filename.png
-            // articleImage/<업로드 시각>.png
+            // articleImage/유저이름_article_id/filename.png
+
             // 2. 파일을 어디에 업로드 할건지
             // articleImage/{userId}/profile.{파일 확장자}
 
@@ -118,6 +127,73 @@ public class ArticleService {
 
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Page
+    public Page<RespondArticlePageDto> readArticlePaged(Integer pageNumber, Integer pageSize, RequestArticlePageDto dto) {
+        Optional<UserEntity> optionalUser = userRepository.findByUsername(dto.getUsername());
+        UserEntity user = optionalUser.get();
+        if (optionalUser.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        // PagingAndSortingRepository 메소드에 전달하는 용도
+        // 조회하고 싶은 페이지의 정보를 담는 객체
+        // 20개씩 데이터를 나눌때 0번 페이지를 달라고 요청하는 Pageable
+        Pageable pageable = PageRequest.of(
+                pageNumber, pageSize, Sort.by("id").ascending());
+        Page<ArticleEntity> articleEntityPage
+                = articleRepository.findAllByUser(user, pageable);
+        // map: 전달받은 함수를 각 원소에 인자로 전달한 결과를
+        // 다시 모아서 Stream으로
+        // Page.map: 전달받은 함수를 각 원소에 인자로 전달한 결과를
+        // 다시 모아서 Page로
+        Page<RespondArticlePageDto> articleDtoPage
+                = articleEntityPage.map(RespondArticlePageDto::fromEntity);
+        return articleDtoPage;
+    }
+
+    // DELETE Image 피드 이미지 삭제
+    public void removeArticleImage(Long article_id, Long image_id, Authentication authentication) {
+        String username = authentication.getName();
+        Optional<ArticleEntity> optionalArticle = articleRepository.findById(article_id);
+
+        // 사용자 검증
+        if (optionalArticle.get().getUser().getUsername().equals(username)) {
+            List<Article_ImagesEntity> targets = optionalArticle.get().getArticle_images();
+
+            // 삭제하고자하는 ArticleImage가 맞는지 검증
+            for (Article_ImagesEntity target : targets) {
+                if (target.getId().equals(image_id)) {
+                    // 서버에 저장되어있는 사진 삭제
+                    Optional<Article_ImagesEntity> optionalArticleImages = articleImagesRepository.findById(image_id);
+                    String[] fileNameSplit = optionalArticleImages.get().getImage_url().split("/");
+                    String fileType = fileNameSplit[fileNameSplit.length-1];
+                    String fileName = String.format("articleImage/%s_%d/%s", username, article_id, fileType);
+                    File file = new File(fileName);
+                    file.delete();
+                    articleImagesRepository.deleteById(image_id);
+                }
+            }
+        }else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    // 피드 삭제 /사용자 입장에서만 삭제, 서버 DB에는 남아있음
+    public void deleteArticleServie(Long article_id, Authentication authentication) {
+        String username = authentication.getName();
+        Optional<ArticleEntity> optionalArticle = articleRepository.findById(article_id);
+
+        // 사용자 검증
+        if (optionalArticle.get().getUser().getUsername().equals(username)) {
+            // 현재 시간을 저장
+            LocalDateTime currentTime = LocalDateTime.now();
+
+            ArticleEntity article = optionalArticle.get();
+            article.setDeleted_at(currentTime);
+            articleRepository.save(article);
+        }else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
     }
 }
