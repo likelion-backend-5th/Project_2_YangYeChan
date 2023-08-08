@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface Users_FollowsRepository extends JpaRepository<User_FollowsEntity, Long> {
     List<User_FollowsEntity> findAllByFollowing(UserEntity following);
     Optional<User_FollowsEntity> findByFollowerAndFollowing(UserEntity follower, UserEntity following);
+    List<UserEntity> findAllByFollower(UserEntity user);
 }

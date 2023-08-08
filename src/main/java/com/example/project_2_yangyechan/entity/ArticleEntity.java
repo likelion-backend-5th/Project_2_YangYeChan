@@ -35,4 +35,5 @@ public class ArticleEntity {
 
     @OneToMany(mappedBy = "article")
     private List<Article_ImagesEntity> article_images = new ArrayList<>();
+
 }

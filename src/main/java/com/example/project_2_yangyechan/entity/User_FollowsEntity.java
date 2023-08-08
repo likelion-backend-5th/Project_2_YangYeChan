@@ -18,4 +18,9 @@ public class User_FollowsEntity {
     @ManyToOne
     @JoinColumn(name = "following")
     private UserEntity following;
+
+    public UserEntity getFollowing() {
+        return following;
+    }
+
 }

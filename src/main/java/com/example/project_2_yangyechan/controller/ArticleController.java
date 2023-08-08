@@ -39,11 +39,11 @@ public class ArticleController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     public ResponseDto postImage(
-            @PathVariable("id") Long aricle_id,
+            @PathVariable("id") Long article_id,
             @RequestParam("image") MultipartFile articleImage,
             Authentication authentication
     ) {
-        articleService.createArticleImage(aricle_id, articleImage, authentication);
+        articleService.createArticleImage(article_id, articleImage, authentication);
         ResponseDto response = new ResponseDto();
         response.setMessage("이미지가 등록되었습니다.");
         return response;
@@ -59,15 +59,15 @@ public class ArticleController {
         return articleService.readArticlePaged(page, limit, dto);
     }
 
-//    // Article 단독 조회
-//    public RespondArticle readArticleByArticleId(Long article_id) {
-//        Optional<ArticleEntity> optionalEntity
-//                = articleRepository.findById(article_id);
-//        if (optionalEntity.isPresent()) {
-//            return RespondArticle
-//                    .fromEntity(optionalEntity.get());
-//        } else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-//    }
+    // GET
+    // Article 단독 조회
+    @GetMapping("/{id}/page")
+    public RespondArticle readArticleByArticleId(
+            @PathVariable("id") Long article_id,
+            Authentication authentication
+    ) {
+        return articleService.readOnlyArticle(article_id, authentication);
+    }
 
     // DELETE /articles/{id}/image/update
     @DeleteMapping("/{id}/image/{image_id}/update")
@@ -116,5 +116,15 @@ public class ArticleController {
         }else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+    }
+
+    // GET 팔로우한 모든 사용자의 피드목록 조회
+    @GetMapping("/home")
+    public Page<RespondArticlePageDto> readAllFollower(
+            Authentication authentication
+    ) {
+        Integer page = 0;
+        Integer limit = 25;
+        return articleService.readArticleFollowersPaged(page, limit, authentication);
     }
 }

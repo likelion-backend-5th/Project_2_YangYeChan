@@ -1,17 +1,8 @@
 package com.example.project_2_yangyechan.service;
 
-import com.example.project_2_yangyechan.dto.ArticleDto;
-import com.example.project_2_yangyechan.dto.RequestArticlePageDto;
-import com.example.project_2_yangyechan.dto.RespondArticlePageDto;
-import com.example.project_2_yangyechan.dto.ResponseDto;
-import com.example.project_2_yangyechan.entity.ArticleEntity;
-import com.example.project_2_yangyechan.entity.Article_ImagesEntity;
-import com.example.project_2_yangyechan.entity.Like_ArticleEntity;
-import com.example.project_2_yangyechan.entity.UserEntity;
-import com.example.project_2_yangyechan.repository.ArticleRepository;
-import com.example.project_2_yangyechan.repository.Article_ImagesRepository;
-import com.example.project_2_yangyechan.repository.Like_ArticleRepository;
-import com.example.project_2_yangyechan.repository.UserRepository;
+import com.example.project_2_yangyechan.dto.*;
+import com.example.project_2_yangyechan.entity.*;
+import com.example.project_2_yangyechan.repository.*;
 import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,6 +35,7 @@ public class ArticleService {
     private final UserRepository userRepository;
     private final JpaUserDetailsManager manager;
     private final Like_ArticleRepository likeArticleRepository;
+    private final Users_FollowsRepository usersFollowsRepository;
 
     // CREATE
     public void createArticle(ArticleDto dto, Authentication authentication) {
@@ -156,6 +150,21 @@ public class ArticleService {
         return articleDtoPage;
     }
 
+    // 피드 단독 조회
+    public RespondArticle readOnlyArticle(Long article_id, Authentication authentication) {
+        String username = authentication.getName();
+        Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
+
+        Optional<ArticleEntity> optionalEntity
+                = articleRepository.findById(article_id);
+
+        if (optionalUser.isPresent() && optionalEntity.isPresent()) {
+            return RespondArticle.fromEntity(optionalEntity.get());
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
     // DELETE Image 피드 이미지 삭제
     public void removeArticleImage(Long article_id, Long image_id, Authentication authentication) {
         String username = authentication.getName();
@@ -235,4 +244,31 @@ public class ArticleService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
     }
+
+    // Page
+    public Page<RespondArticlePageDto> readArticleFollowersPaged(Integer pageNumber, Integer pageSize, Authentication authentication) {
+        String username = authentication.getName();
+        Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
+
+        if (optionalUser.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        // PagingAndSortingRepository 메소드에 전달하는 용도
+        // 조회하고 싶은 페이지의 정보를 담는 객체
+        // 20개씩 데이터를 나눌때 0번 페이지를 달라고 요청하는 Pageable
+        UserEntity user = optionalUser.get();
+        // 해당 유저가 팔로우한 팔로워들의 목록을 가져옴
+        List<UserEntity> followers = usersFollowsRepository.findAllByFollower(user);
+        // 각 팔로워들의 Article을 조회하고 페이지로 나누어 역순으로 정렬
+        for (UserEntity follower : followers) {
+
+        }
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id").descending());
+        Page<ArticleEntity> articleEntityPage
+                = articleRepository.findAllByUser(user, pageable);
+        Page<RespondArticlePageDto> articleDtoPage
+                = articleEntityPage.map(RespondArticlePageDto::fromEntity);
+        return articleDtoPage;
+    }
+
+
 }
