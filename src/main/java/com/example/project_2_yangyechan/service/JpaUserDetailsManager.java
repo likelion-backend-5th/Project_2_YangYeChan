@@ -23,18 +23,6 @@ import java.util.Optional;
 public class JpaUserDetailsManager implements UserDetailsManager {
     private final UserRepository userRepository;
 
-//    public JpaUserDetailsManager(
-//            UserRepository userRepository,
-//            PasswordEncoder passwordEncoder
-//    ) {
-//        this.userRepository = userRepository;
-//        createUser(CustomUserDetails.builder()
-//                .username("user")
-//                .password(passwordEncoder.encode("asdf"))
-//                .email("user@gmail.com")
-//                .build());
-//    }
-
     @Override
     // UserDetailsService.loadUserByUsername(String)
     // 실제로 Spring Security 내부에서 사용하는 반드시 구현해야 정상동작을 기대할 수 있는 메소드
