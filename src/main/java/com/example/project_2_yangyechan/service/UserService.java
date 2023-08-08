@@ -1,15 +1,17 @@
 package com.example.project_2_yangyechan.service;
 
+import com.example.project_2_yangyechan.dto.RequestDto;
 import com.example.project_2_yangyechan.dto.ResponseDto;
 import com.example.project_2_yangyechan.dto.ResponseUserDto;
 import com.example.project_2_yangyechan.entity.UserEntity;
 import com.example.project_2_yangyechan.entity.User_FollowsEntity;
+import com.example.project_2_yangyechan.entity.User_FriendsEntity;
+import com.example.project_2_yangyechan.repository.Users_FriendsRepository;
 import com.example.project_2_yangyechan.repository.UserRepository;
-import com.example.project_2_yangyechan.repository.UsersFollowsRepository;
+import com.example.project_2_yangyechan.repository.Users_FollowsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +20,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,7 +27,8 @@ import java.util.Optional;
 public class UserService {
     private final JpaUserDetailsManager manager;
     private final UserRepository userRepository;
-    private final UsersFollowsRepository usersFollowsRepository;
+    private final Users_FollowsRepository usersFollowsRepository;
+    private final Users_FriendsRepository userFriendsRepository;
 
     // UPDATE Image
     public void updateUserAvatar(MultipartFile avatarImage, Authentication authentication) {
@@ -113,7 +115,7 @@ public class UserService {
                 usersFollowsRepository.delete(follow.get());
                 response.setMessage("unfollow");
                 return response;
-            } else {
+            }else {
                 User_FollowsEntity newFollow = new User_FollowsEntity();
                 newFollow.setFollower(follower);
                 newFollow.setFollowing(following);
@@ -125,5 +127,54 @@ public class UserService {
             throw new UsernameNotFoundException(username);
         }
     }
+
+    // 친구 신청
+    public ResponseDto friendRequest(Long user_id, Authentication authentication) {
+        String username = authentication.getName();
+        Optional<UserEntity> user = userRepository.findByUsername(username);
+
+        ResponseDto response = new ResponseDto();
+
+        if (user.isPresent()) {
+            UserEntity requestUser = user.get();
+            Optional<UserEntity> optionalRequest = userRepository.findById(user_id);
+            UserEntity targetUser = optionalRequest.get();
+
+            Optional<User_FriendsEntity> request = userFriendsRepository.findByToUserAndFromUser(targetUser, requestUser);
+
+            // 이미 친구신청을 보낸 경우
+            if (request.isPresent()) {
+                userFriendsRepository.delete(request.get());
+                response.setMessage("친구 신청을 취소합니다.");
+            }else if (targetUser.getId().equals(requestUser.getId())) {
+                // 자신에게 친구신청을 보낸 경우
+                response.setMessage("자신에게 친구신청을 보낼 수 없습니다.");
+            }else {
+                // 새로운 친구신청을 보내는 경우
+                User_FriendsEntity newRequest = new User_FriendsEntity();
+                newRequest.setFromUser(requestUser);
+                newRequest.setToUser(targetUser);
+                userFriendsRepository.save(newRequest);
+                response.setMessage("친구신청을 보냈습니다.");
+            }
+        }else {
+            throw new UsernameNotFoundException(username);
+        }
+        return response;
+    }
+
+    // 친구 수락 or 거절
+//    public ResponseDto friendRespond(Long user_id, RequestDto dto, Authentication authentication) {
+//        String username = authentication.getName();
+//        Optional<UserEntity> user = userRepository.findByUsername(username);
+//
+//        ResponseDto response = new ResponseDto();
+//
+//        if (user.isPresent()) {
+//
+//        }else {
+//            throw new UsernameNotFoundException(username);
+//        }
+//    }
 }
 

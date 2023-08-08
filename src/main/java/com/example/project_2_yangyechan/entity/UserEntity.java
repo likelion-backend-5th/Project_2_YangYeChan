@@ -34,4 +34,10 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Like_ArticleEntity> like_articles = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "user")
+//    private List<User_FollowsEntity> userFollows = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "user")
+//    private List<User_FriendsEntity> userFriends = new ArrayList<>();
 }

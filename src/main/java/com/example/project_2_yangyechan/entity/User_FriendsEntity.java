@@ -13,9 +13,9 @@ public class User_FriendsEntity {
 
     @ManyToOne
     @JoinColumn(name = "from_user")
-    private UserEntity from_user;
+    private UserEntity fromUser;
 
     @ManyToOne
     @JoinColumn(name = "to_user")
-    private UserEntity to_user;
+    private UserEntity toUser;
 }

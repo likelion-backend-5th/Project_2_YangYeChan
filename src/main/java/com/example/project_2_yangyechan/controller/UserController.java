@@ -154,4 +154,30 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
+
+    // POST
+    // 친구 신청
+    @PostMapping("/{id}/friend/request")
+    public ResponseDto userFriendRequest(
+            @PathVariable("id") Long user_id,
+            @RequestBody RequestDto request,
+            Authentication authentication
+    ) {
+        if (request.getRequest().equals("친구 신청")) {
+            return userService.friendRequest(user_id, authentication);
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // POST
+    // 친구 수락 or 거절
+//    @PostMapping("/{id}/friend/respond")
+//    public ResponseDto userFriendRespond(
+//            @PathVariable("id") Long user_id,
+//            @RequestBody RequestDto request,
+//            Authentication authentication
+//    ) {
+//        return userService.friendRespond(user_id, request, authentication);
+//    }
 }
