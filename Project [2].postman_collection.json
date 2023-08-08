@@ -1,0 +1,559 @@
+{
+	"info": {
+		"_postman_id": "c2df68c5-8ab4-43aa-aa34-4c05a55f8553",
+		"name": "Project [2]",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28055533"
+	},
+	"item": [
+		{
+			"name": "user /login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"yechan\",\r\n    \"password\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user /register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/register?username=yechan&password=1234&password-check=1234&profile_img&email&phone",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"register"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "yechan"
+						},
+						{
+							"key": "password",
+							"value": "1234"
+						},
+						{
+							"key": "password-check",
+							"value": "1234"
+						},
+						{
+							"key": "profile_img",
+							"value": null
+						},
+						{
+							"key": "email",
+							"value": null
+						},
+						{
+							"key": "phone",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user /profile/image",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNjkxMzkwODkxLCJleHAiOjE2OTEzOTQ0OTF9.cCTUPg03EmMrVgpADOiCvvFca-ug-6s53D2r8zbcXpGKNVutsXZhhogLsQ2hSrZ-knglBZ-GAqCbdnKjRpVauQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/C:/Users/yangyechan/Desktop/노진구.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/profile/image",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"profile",
+						"image"
+					],
+					"query": [
+						{
+							"key": "image",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "article /create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNjkxNDE2NTIyLCJleHAiOjE2OTE0MjAxMjJ9.Qcf_PPcX78ZQToAs1qNPlXEqrcXRgD0RpQOkkxaw25bK5u5UaQCVbPACIJsamRFJnkIyvhd-oBcfIVMvRMuO9g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"aa\",\r\n    \"content\": \"gg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/articles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"articles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "article /post image",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNjkxNDkyODkyLCJleHAiOjE2OTE0OTY0OTJ9.9czevtWWsIg90zkGfFT_q5VKRz1O6No8Vu_c39ij_qCkmVlegyN0GUGiqEpQi7SJHQTcp2YCbWcZmGaoN8rvTw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/C:/Users/yangyechan/Desktop/노진구.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/articles/1/image",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"articles",
+						"1",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "article /pages",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNjkxNDkyODkyLCJleHAiOjE2OTE0OTY0OTJ9.9czevtWWsIg90zkGfFT_q5VKRz1O6No8Vu_c39ij_qCkmVlegyN0GUGiqEpQi7SJHQTcp2YCbWcZmGaoN8rvTw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"user\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/articles/pages",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"articles",
+						"pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "article /view/article",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNjkxNDkyODkyLCJleHAiOjE2OTE0OTY0OTJ9.9czevtWWsIg90zkGfFT_q5VKRz1O6No8Vu_c39ij_qCkmVlegyN0GUGiqEpQi7SJHQTcp2YCbWcZmGaoN8rvTw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/articles/1/page",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"articles",
+						"1",
+						"page"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "article /image/delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5ZWNoYW4iLCJpYXQiOjE2OTEzOTg2MjgsImV4cCI6MTY5MTQwMjIyOH0.tvAcTK9v9EdtIFhUcX-pPeFwkvUsXawyOKZs79vFgj9CqnTYqa4NFJThY4ypqQvXRXtPlv0b4c8VEW9l1yn0RQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"article_request\": \"이미지 삭제\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/articles/1/image/1/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"articles",
+						"1",
+						"image",
+						"1",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "article/ alticle/delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5ZWNoYW4iLCJpYXQiOjE2OTE0MDcxMDYsImV4cCI6MTY5MTQxMDcwNn0.6oG04xwfFzYSzNuI8r8JvEKPtJw4pXjqE5_8WgJCWl_M7QcJS8BOoK0ha2VhJSG4ySfptgkHucqqSv--Wh2nMA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"article_request\": \"피드 삭제\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/articles/3/delete",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"articles",
+						"3",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "comment /create comment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNjkxNDk0MjIxLCJleHAiOjE2OTE0OTc4MjF9.7tsLkHgG2pnS5Ux-wWVBTJKj_PDDyyhEBEZ5K5vWY6gB5AxeI4znmluL1dIlfwDIShR-0owMiYi67XIAxpG1Eg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"content\": \"안녕하세요\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/articles/1/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"articles",
+						"1",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "article /like",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5ZWNoYW4iLCJpYXQiOjE2OTE0OTQyODgsImV4cCI6MTY5MTQ5Nzg4OH0.i7IpMxsoijYmqzZjuxDNr7mhPP3pNGIRAt-HcrkKI1o2Zjf_rxZtvP9VWsion22ExWjhG3SWyG8yjnP1p24F7A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"article_request\": \"좋아요\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/articles/1/like",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"articles",
+						"1",
+						"like"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user /inform",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5ZWNoYW4iLCJpYXQiOjE2OTE0NTU4ODUsImV4cCI6MTY5MTQ1OTQ4NX0.CQ84KUaH7UpmXSE3Pgs5Tn1Ng9b0BMOdZZTPOXNtS_lQgxOctIVkIJktYhygkhMQ7dJ2E6czbE8vH18CGxe6fA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/1/inform",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"1",
+						"inform"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user /follow",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5ZWNoYW4iLCJpYXQiOjE2OTE0NzgxMDcsImV4cCI6MTY5MTQ4MTcwN30.TyEFhlEXS2LSdriFoVFjQZ-kNXmkdkGgr8ANXU5OjRjKniRvgaR4ix0D6r5DRZFt8wTf_pWV2Z6MLElo8od2ww",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\": \"follow\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/1/follow",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"1",
+						"follow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user /friend/request",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5ZWNoYW4iLCJpYXQiOjE2OTE0NzgxMDcsImV4cCI6MTY5MTQ4MTcwN30.TyEFhlEXS2LSdriFoVFjQZ-kNXmkdkGgr8ANXU5OjRjKniRvgaR4ix0D6r5DRZFt8wTf_pWV2Z6MLElo8od2ww",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"request\": \"친구 신청\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/1/friend/request",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"1",
+						"friend",
+						"request"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
