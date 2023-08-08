@@ -1,6 +1,8 @@
 package com.example.project_2_yangyechan.controller;
 
+import com.example.project_2_yangyechan.dto.RequestDto;
 import com.example.project_2_yangyechan.dto.ResponseDto;
+import com.example.project_2_yangyechan.dto.ResponseUserDto;
 import com.example.project_2_yangyechan.entity.CustomUserDetails;
 import com.example.project_2_yangyechan.jwt.JwtRequestDto;
 import com.example.project_2_yangyechan.jwt.JwtTokenDto;
@@ -129,5 +131,27 @@ public class UserController {
         return response;
     }
 
+    // GET
+    // User 프로필 조회
+    @GetMapping("/{id}/inform")
+    public ResponseUserDto userInform(
+            @PathVariable("id") Long user_id
+    ) {
+        return userService.userInformView(user_id);
+    }
 
+    // POST
+    // Follow
+    @PostMapping("/{id}/follow")
+    public ResponseDto userFollow(
+            @PathVariable("id") Long user_id,
+            @RequestBody RequestDto request,
+            Authentication authentication
+    ) {
+        if (request.getRequest().equals("follow")) {
+            return userService.followOrUnfollow(user_id, authentication);
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
 }

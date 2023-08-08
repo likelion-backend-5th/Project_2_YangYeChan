@@ -1,7 +1,11 @@
 package com.example.project_2_yangyechan.service;
 
+import com.example.project_2_yangyechan.dto.ResponseDto;
+import com.example.project_2_yangyechan.dto.ResponseUserDto;
 import com.example.project_2_yangyechan.entity.UserEntity;
+import com.example.project_2_yangyechan.entity.User_FollowsEntity;
 import com.example.project_2_yangyechan.repository.UserRepository;
+import com.example.project_2_yangyechan.repository.UsersFollowsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -14,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,6 +26,7 @@ import java.util.Optional;
 public class UserService {
     private final JpaUserDetailsManager manager;
     private final UserRepository userRepository;
+    private final UsersFollowsRepository usersFollowsRepository;
 
     // UPDATE Image
     public void updateUserAvatar(MultipartFile avatarImage, Authentication authentication) {
@@ -71,6 +77,50 @@ public class UserService {
             userEntity.setProfile_img(String.format("/static/%s/%s", username, profileFilename));
             userRepository.save(userEntity);
 
+        }else {
+            throw new UsernameNotFoundException(username);
+        }
+    }
+
+    // 유저 정보 조회
+    public ResponseUserDto userInformView (Long user_id) {
+        // 유저 존재 확인
+        Optional<UserEntity> optionalUser = userRepository.findById(user_id);
+
+        if (optionalUser.isPresent()) {
+            UserEntity entity = optionalUser.get();
+            return ResponseUserDto.fromEntity(entity);
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // 유저 팔로우, 언팔로우
+    public ResponseDto followOrUnfollow(Long user_id, Authentication authentication) {
+        String username = authentication.getName();
+        Optional<UserEntity> user = userRepository.findByUsername(username);
+
+        ResponseDto response = new ResponseDto();
+
+        if (user.isPresent()) {
+            UserEntity follower = user.get();
+            Optional<UserEntity> optionalFollowing = userRepository.findById(user_id);
+            UserEntity following = optionalFollowing.get();
+
+            Optional<User_FollowsEntity> follow = usersFollowsRepository.findByFollowerAndFollowing(follower, following);
+
+            if (follow.isPresent()) {
+                usersFollowsRepository.delete(follow.get());
+                response.setMessage("unfollow");
+                return response;
+            } else {
+                User_FollowsEntity newFollow = new User_FollowsEntity();
+                newFollow.setFollower(follower);
+                newFollow.setFollowing(following);
+                usersFollowsRepository.save(newFollow);
+                response.setMessage("follow");
+                return response;
+            }
         }else {
             throw new UsernameNotFoundException(username);
         }
